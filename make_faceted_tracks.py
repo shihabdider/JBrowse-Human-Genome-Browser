@@ -115,6 +115,7 @@ def make_vcf_track(datafilepath):
 	datafile_track['storeClass'] ='JBrowse/Store/SeqFeature/VCFTabix' 
 	datafile_track['urlTemplate'] = os.path.relpath(datafilepath, data_dir)
 	datafile_track['type'] = 'JBrowse/View/Track/CanvasFeatures'
+	datafile_track['maxFeatureScreenDensity'] = 0.01
 
 	return datafile_track
 
@@ -131,6 +132,7 @@ def make_gff_track(datafilepath, feature=None):
 		datafile_track['chunkSizeLimit'] = 2000000
 		datafile_track['dontRedispatch'] = 'chromosome'
 		datafile_track['topLevelFeatures'] = feature
+		datafile_track['maxFeatureScreenDensity'] = 0.01
 
 	else:
 		datafile_track['label'] = os.path.basename(datafilepath)
@@ -140,7 +142,8 @@ def make_gff_track(datafilepath, feature=None):
 		datafile_track['type'] = 'JBrowse/View/Track/CanvasFeatures'
 		datafile_track['chunkSizeLimit'] = 2000000
 		datafile_track['dontRedispatch'] = 'chromosome'
-	
+		datafile_track['maxFeatureScreenDensity'] = 0.01
+
 	return datafile_track
 
 def make_bed_track(datafilepath):
@@ -152,6 +155,7 @@ def make_bed_track(datafilepath):
 	datafile_track['storeClass'] ='JBrowse/Store/SeqFeature/BEDTabix' 
 	datafile_track['urlTemplate'] = os.path.relpath(datafilepath, data_dir)
 	datafile_track['type'] = 'JBrowse/View/Track/CanvasFeatures'
+	datafile_track['maxFeatureScreenDensity'] = 0.01
 	
 	return datafile_track
 
@@ -252,9 +256,10 @@ def make_track_dicts(datafiles):
 
 			elif datafile.endswith('.bed.gz'):
 				# Add clause for removing repeats of gff files in regulation
-				pass
-				#bed_datafile_track = make_bed_track(datafile)
-				#track_dicts.append(bed_datafile_track)
+				datafile_tbi = '{0}.tbi'.format(datafile)
+				if 'ensembl' not in datafile and datafile_tbi in datafiles:
+					bed_datafile_track = make_bed_track(datafile)
+					track_dicts.append(bed_datafile_track)
 				
 	return track_dicts
 
